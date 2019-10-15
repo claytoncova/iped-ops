@@ -7,20 +7,18 @@
 # Clayton G C Santos
 
 #Necessário definir as referências e caminhos
-IPED_PATH=""
-OUTPUT_DIR="."
+IPED_PATH="/root/IPED/iped"
+OUTPUT_DIR="/media/clayton/af2ed5ce-384d-481f-90cc-0a5d1e9b5ef4/extracted-sif"
 SHUTDOWN=false
 
-#Testa se o caminho do IPED foi definido na variável IPED_PATH, acima.
-if [ -z "$IPED_PATH" ]; then
-	echo "Caminho para o .jar do IPED não encontrado no arquivo $0. Defina-o na variável IPED_PATH."
-	exit 1
-fi
-
 display (){
-        for file in $IPED_PATH/*.log; do [[ $file -nt $latest ]] && latest=$file; done
-	tail -f $latest > out & 
-	dialog --title "Saída do IPED: $latest" --tailbox out 0 0
+        for file in $IPED_PATH/log/*.log; do [[ $file -nt $latest ]] && latest=$file; done
+	#tail -f $latest > out & 
+	tail -f $latest & 
+	#dialog --title "Saída do IPED: $latest" --tailbox out 0 0 &
+        PID_DISPLAY=$!
+        wait $1
+        kill -9 $PID_DISPLAY
 }
 
 #Função de criação de diretório com dados do item examinado. Apresenta erro para pastas já existentes.
@@ -66,10 +64,7 @@ exec_iped () {
    PID_IPED=$!
    dialog --title 'Aguarde' --infobox '\nBuscando o arquivo de log...' 0 0 
    sleep 10
-   display
-   PID_DISPLAY=$!
-   wait $PID_IPED
-   kill -9 $PID_DISPLAY
+   display $PID_IPED
    tg-snd "Exame ${ID[$1]} Finalizado!"
 } 
 
