@@ -31,6 +31,13 @@ create_dir () {
    fi       
 } 
 
+hash_dir () {
+    cd "$OUTPUT_DIR/Of.${OFICIO[$1]}-Ld.${LAUDO[$1]}-${ITEM[$1]}-${SERIAL[$1]}"
+    find . -type f -exec sha512sum "{}" \; 2>&1 | tee ../hashes-${LAUDO[$1]}.sha512
+    mv ../hashes-${LAUDO[$1]}.sha512 ./hases.sha512
+    sha512sum hashes.sha512 > hash.txt
+}
+
 #Recebe a quantidade de iterações necessárias
 qtd () {
    LOOPS=$( dialog --title 'IPED Ops' --stdout --inputbox 'Informe o número de discos a serem examinados:' 0 0 )
@@ -80,4 +87,5 @@ done
 for i in $(seq 1 $loops);do
    create_dir i
    exec_iped i
+   hash_dir i
 done
