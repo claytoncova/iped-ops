@@ -26,21 +26,23 @@ create_dir () {
    mkdir "$OUTPUT_DIR/Of.${OFICIO[$1]}-Ld.${LAUDO[$1]}-${ITEM[$1]}-${SERIAL[$1]}"
 
    if [ $? -eq 1 ]; then
-       dialog --title ' FALHA NA CRIAÇÃO DOS ARQUIVOS!! ' --msgbox 'Este item já foi extraído, verifique os parâmetros ou remova o diretório já existente.' 6 80
+       dialog --title ' Erro na criação dos arquivos!! ' --msgbox 'Falha no acesso ao diretório, inacessível ou anteriormente criado. ' 6 80
        exit 1
    fi       
 } 
 
 hash_dir () {
+    tg-snd "Cálculo de hash ${ID[$1]} iniciado."
     cd "$OUTPUT_DIR/Of.${OFICIO[$1]}-Ld.${LAUDO[$1]}-${ITEM[$1]}-${SERIAL[$1]}"
     find . -type f -exec sha512sum "{}" \; 2>&1 | tee ../hashes-${LAUDO[$1]}.sha512
     mv ../hashes-${LAUDO[$1]}.sha512 ./hases.sha512
     sha512sum hashes.sha512 > hash.txt
+    tg-snd "Cálculo de hash ${ID[$1]} finalizado."
 }
 
 #Recebe a quantidade de iterações necessárias
 qtd () {
-   LOOPS=$( dialog --title 'IPED Ops' --stdout --inputbox 'Informe o número de discos a serem examinados:' 0 0 )
+   LOOPS=$( dialog --title 'IPED Ops' --stdout --inputbox 'ATENÇÃO: Informe o número de discos a serem examinados:' 0 0 )
    return $LOOPS
 }
 
@@ -66,13 +68,13 @@ define () {
 
 #Executa o IPED enviando as mensagens de monitoramento para o telegram.
 exec_iped () {
-   tg-snd "Exame ${ID[$1]} Iniciado!"
+   tg-snd "Extração ${ID[$1]} iniciada!"
    java -Xms4G -Xmx${MEM[$1]} -jar $IPED_PATH/iped.jar -d /dev/${DISCO[$1]} -o $OUTPUT_DIR/Of.${OFICIO[$1]}-Ld.${LAUDO[$1]}-${ITEM[$1]}-${SERIAL[$1]}/ &> /dev/null &
    PID_IPED=$!
    dialog --title 'Aguarde' --infobox '\nBuscando o arquivo de log...' 0 0 
    sleep 10
    display $PID_IPED
-   tg-snd "Exame ${ID[$1]} Finalizado!"
+   tg-snd "Extração ${ID[$1]} finalizada."
 } 
 
 #Define quantidade de iterações e executa a definição de parâmetros
@@ -89,3 +91,4 @@ for i in $(seq 1 $loops);do
    exec_iped i
    hash_dir i
 done
+tg-snd "Operação finalizada!!!"
