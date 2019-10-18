@@ -35,7 +35,7 @@ hash_dir () {
     tg-snd "Cálculo de hash ${ID[$1]} iniciado."
     cd "$OUTPUT_DIR/Of.${OFICIO[$1]}-Ld.${LAUDO[$1]}-${ITEM[$1]}-${SERIAL[$1]}"
     find . -type f -exec sha512sum "{}" \; 2>&1 | tee ../hashes-${LAUDO[$1]}.sha512
-    mv ../hashes-${LAUDO[$1]}.sha512 ./hases.sha512
+    mv ../hashes-${LAUDO[$1]}.sha512 ./hashes.sha512
     sha512sum hashes.sha512 > hash.txt
     tg-snd "Cálculo de hash ${ID[$1]} finalizado."
 }
