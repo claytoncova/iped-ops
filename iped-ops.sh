@@ -7,8 +7,8 @@
 # Clayton G C Santos
 
 #Necessário definir as referências e caminhos
-IPED_PATH="/root/IPED/iped"
-OUTPUT_DIR="/media/clayton/af2ed5ce-384d-481f-90cc-0a5d1e9b5ef4/extracted-sif"
+IPED_PATH=""
+OUTPUT_DIR=""
 SHUTDOWN=false
 
 display (){
