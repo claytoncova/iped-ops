@@ -7,8 +7,6 @@
 # Clayton G C Santos
 
 #Necessário definir as referências e caminhos
-IPED_PATH=""
-OUTPUT_DIR=""
 SHUTDOWN=false
 
 display (){
@@ -48,13 +46,13 @@ qtd () {
 
 #Para cada iteração, define os parâmetros para o item a ser examinado.
 define () {
-   ID[$1]=$( dialog --title 'Automação de extração - IPED' --stdout --inputbox 'ID do Exame:' 0 0 )
-   OFICIO[$1]=$( dialog --title 'Automação de extração - IPED' --stdout --inputbox 'Número do Ofício:' 0 0 )
-   LAUDO[$1]=$( dialog --title 'Automação de extração - IPED' --stdout --inputbox 'Número do Laudo:' 0 0 )
-   ITEM[$1]=$( dialog --title 'Automação de extração - IPED' --stdout --inputbox 'Item:' 0 0 )
-   SERIAL[$1]=$( dialog --title 'Automação de extração - IPED' --stdout --inputbox 'Serial:' 0 0 )
-   DISCO[$1]=$( dialog --title 'Automação de extração - IPED' --stdout --inputbox 'Disco:' 0 0 )
-   MEM[$1]=$( dialog --stdout --menu 'Qtd. de Memória:' 0 0 0   4 GB 8 GB 12 GB )G
+   ID[$1]=$( dialog --title 'Automação de extração - IPED' --stdout --inputbox 'ID do Exame:' 0 0 "ID[(($1--))]")
+   OFICIO[$1]=$( dialog --title 'Automação de extração - IPED' --stdout --inputbox 'Número do Ofício:' 0 0 "OFICIO[(($1--))]")
+   LAUDO[$1]=$( dialog --title 'Automação de extração - IPED' --stdout --inputbox 'Número do Laudo:' 0 0 "LAUDO[(($1--))]")
+   ITEM[$1]=$( dialog --title 'Automação de extração - IPED' --stdout --inputbox 'Item:' 0 0 "ITEM[(($1--))]")
+   SERIAL[$1]=$( dialog --title 'Automação de extração - IPED' --stdout --inputbox 'Serial:' 0 0 "SERIAL[(($1--))]")
+   DISCO[$1]=$( dialog --title 'Automação de extração - IPED' --stdout --inputbox 'Disco:' 0 0 '/dev/' )
+   MEM[$1]=$( dialog --stdout --menu 'Qtd. de Memória:' 0 0 0   12 GB 8 GB 4 GB )G
    
    #Checa se os parâmetros estão corretos, caso contrário reinicia o formulário
    dialog --title " Resumo do dados inseridos. " --yesno "Verifique se os dados abaixo estão corretos.\n Id. do Exame:${ID[$1]} \n Ofício:${OFICIO[$1]} \n Laudo:${LAUDO[$1]} \n Item:${ITEM[$1]} \n Serial:${SERIAL[$1]} \n Disco:${DISCO[$1]} \n Memória:${MEM[$1]}" --stdout 0 0 
@@ -69,7 +67,7 @@ define () {
 #Executa o IPED enviando as mensagens de monitoramento para o telegram.
 exec_iped () {
    tg-snd "Extração ${ID[$1]} iniciada!"
-   java -Xms4G -Xmx${MEM[$1]} -jar $IPED_PATH/iped.jar -d /dev/${DISCO[$1]} -o $OUTPUT_DIR/Of.${OFICIO[$1]}-Ld.${LAUDO[$1]}-${ITEM[$1]}-${SERIAL[$1]}/ &> /dev/null &
+   java -Xms4G -Xmx${MEM[$1]} -jar $IPED_PATH/iped.jar -d ${DISCO[$1]} -o $OUTPUT_DIR/Of.${OFICIO[$1]}-Ld.${LAUDO[$1]}-${ITEM[$1]}-${SERIAL[$1]}/ &> /dev/null &
    PID_IPED=$!
    dialog --title 'Aguarde' --infobox '\nBuscando o arquivo de log...' 0 0 
    sleep 10
