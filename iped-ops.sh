@@ -9,6 +9,15 @@
 #Necessário definir as referências e caminhos
 SHUTDOWN=false
 
+ID_STD="HD-Marca-Modelo"
+OFICIO_STD="XX-19-DRACO-INTERIOR"
+LAUDO_STD="XX-19"
+SERIAL_STD=""
+DISCO_STD="/dev/"
+
+
+
+
 display (){
         for file in $IPED_PATH/log/*.log; do [[ $file -nt $latest ]] && latest=$file; done
 	#tail -f $latest > out & 
@@ -46,16 +55,21 @@ qtd () {
 
 #Para cada iteração, define os parâmetros para o item a ser examinado.
 define () {
-   ID[$1]=$( dialog --title 'Automação de extração - IPED' --stdout --inputbox 'ID do Exame:' 0 0 "ID[(($1--))]")
-   OFICIO[$1]=$( dialog --title 'Automação de extração - IPED' --stdout --inputbox 'Número do Ofício:' 0 0 "OFICIO[(($1--))]")
-   LAUDO[$1]=$( dialog --title 'Automação de extração - IPED' --stdout --inputbox 'Número do Laudo:' 0 0 "LAUDO[(($1--))]")
-   ITEM[$1]=$( dialog --title 'Automação de extração - IPED' --stdout --inputbox 'Item:' 0 0 "ITEM[(($1--))]")
-   SERIAL[$1]=$( dialog --title 'Automação de extração - IPED' --stdout --inputbox 'Serial:' 0 0 "SERIAL[(($1--))]")
-   DISCO[$1]=$( dialog --title 'Automação de extração - IPED' --stdout --inputbox 'Disco:' 0 0 '/dev/' )
+   
+   ID[$1]=$( dialog --title 'Automação de extração - IPED' --stdout --inputbox "ID do $iº Exame:" 0 0 "$ID_STD")
+   ID_STD=${ID[$1]}
+   OFICIO[$1]=$( dialog --title 'Automação de extração - IPED' --stdout --inputbox 'Número do Ofício:' 0 0 "$OFICIO_STD")
+   OFICIO_STD=${OFICIO[$1]}   
+   LAUDO[$1]=$( dialog --title 'Automação de extração - IPED' --stdout --inputbox 'Número do Laudo:' 0 0 "$LAUDO_STD")
+   LAUDO_STD=${LAUDO[$1]}
+   ITEM[$1]=$( dialog --title 'Automação de extração - IPED' --stdout --inputbox 'Item:' 0 0 "${ID[$1]}")
+   SERIAL[$1]=$( dialog --title 'Automação de extração - IPED' --stdout --inputbox 'Serial:' 0 0 "$SERIAL_STD")
+   SERIAL_STD=${SERIAL[$1]}
+   DISCO[$1]=$( dialog --title 'Automação de extração - IPED' --stdout --inputbox 'Disco:' 0 0 "$DISCO_STD" )
    MEM[$1]=$( dialog --stdout --menu 'Qtd. de Memória:' 0 0 0   12 GB 8 GB 4 GB )G
    
    #Checa se os parâmetros estão corretos, caso contrário reinicia o formulário
-   dialog --title " Resumo do dados inseridos. " --yesno "Verifique se os dados abaixo estão corretos.\n Id. do Exame:${ID[$1]} \n Ofício:${OFICIO[$1]} \n Laudo:${LAUDO[$1]} \n Item:${ITEM[$1]} \n Serial:${SERIAL[$1]} \n Disco:${DISCO[$1]} \n Memória:${MEM[$1]}" --stdout 0 0 
+   dialog --title " Resumo do dados inseridos. " --yesno "Verifique se os dados abaixo estão corretos.\n Id. do $iº Exame:${ID[$1]} \n Ofício:${OFICIO[$1]} \n Laudo:${LAUDO[$1]} \n Item:${ITEM[$1]} \n Serial:${SERIAL[$1]} \n Disco:${DISCO[$1]} \n Memória:${MEM[$1]}" --stdout 0 0 
 
    if [ $? -eq 0 ]; then
 	return 0
