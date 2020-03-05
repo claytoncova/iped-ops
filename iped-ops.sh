@@ -7,6 +7,8 @@
 # Clayton G C Santos
 
 #Necessário definir as referências e caminhos
+IPED_PATH=""
+OUTPUT_DIR=""
 SHUTDOWN=false
 
 ID_STD="HD-Marca-Modelo"
@@ -14,8 +16,6 @@ OFICIO_STD="XX-19-DRACO-INTERIOR"
 LAUDO_STD="XX-19"
 SERIAL_STD=""
 DISCO_STD="/dev/"
-
-
 
 
 display (){
@@ -81,10 +81,10 @@ define () {
 #Executa o IPED enviando as mensagens de monitoramento para o telegram.
 exec_iped () {
    tg-snd "Extração ${ID[$1]} iniciada!"
-   java -Xms4G -Xmx${MEM[$1]} -jar $IPED_PATH/iped.jar -d ${DISCO[$1]} -o $OUTPUT_DIR/Of.${OFICIO[$1]}-Ld.${LAUDO[$1]}-${ITEM[$1]}-${SERIAL[$1]}/ &> /dev/null &
+   java -Xms4G -Xmx${MEM[$1]} -jar $IPED_PATH/iped.jar -d "${DISCO[$1]}" -o "$OUTPUT_DIR/Of.${OFICIO[$1]}-Ld.${LAUDO[$1]}-${ITEM[$1]}-${SERIAL[$1]}/" &> /dev/null &
    PID_IPED=$!
    dialog --title 'Aguarde' --infobox '\nBuscando o arquivo de log...' 0 0 
-   sleep 10
+   sleep 30
    display $PID_IPED
    tg-snd "Extração ${ID[$1]} finalizada."
 } 
